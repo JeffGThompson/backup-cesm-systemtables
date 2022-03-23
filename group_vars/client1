@@ -1,0 +1,6 @@
+---
+# Temp folder location
+tmp_folder: /opt/arcsight/manager/tmp
+
+# Password for CORR-Engine Database
+password: password1

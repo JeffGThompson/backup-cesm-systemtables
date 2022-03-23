@@ -1,0 +1,6 @@
+- name: CESM System Tables Backup Playbook
+  hosts: all
+  become: yes
+
+  roles:
+    - common

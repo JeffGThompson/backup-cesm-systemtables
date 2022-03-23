@@ -1,0 +1,31 @@
+---
+
+- name: Check if System Table already exists
+  stat:
+    path: "{{ tmp_folder }}/arcsight_dump_system_tables.sql"
+  register: stat_result
+
+#Only if the file already existed
+- name: Delete System Tables
+  file:
+    path: "{{ tmp_folder }}/arcsight_dump_system_tables.sql"
+    state: touch
+  when: stat_result.stat.exists == True 
+
+- name: Export System Tables
+  command: "/opt/arcsight/manager/bin/arcsight export_system_tables arcsight {{ password }} arcsight"
+
+- name: Archive System Tables
+  command: "tar -czvf{{ tmp_folder }}/arcsight_dump_system_tables.tar.gz {{ tmp_folder }}/arcsight_dump_system_tables.sql"
+
+#Grab the .tar.gz from the server
+- fetch:
+    src: "{{ tmp_folder }}/arcsight_dump_system_tables.tar.gz"
+    dest: "/tmp/systemtables-{{ ansible_hostname }}-{{ inventory_hostname }}/{{ date }}-arcsight_dump_system_tables.tar.gz"
+    flat: yes
+
+- name: Clean up Export System Tables
+  file: path="{{ tmp_folder }}/arcsight_dump_system_tables.tar.gz" state=absent
+
+- name: Clean up Export System Tables tgz
+  file: path="{{ tmp_folder }}/arcsight_dump_system_tables.sql" state=absent

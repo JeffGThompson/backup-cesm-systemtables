@@ -1,0 +1,2 @@
+# Date for files and folders
+date: "{{ lookup('pipe', 'date +%Y%m%d-%H%M') }}"
